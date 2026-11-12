@@ -1,35 +1,36 @@
 # gbx-protos
 
-gRPC protos and the `gbx-protos` Rust crate for the
-[Titan Solana bundle API](https://docs.titanbuilder.xyz/solana). Titan is a
-block builder on [GBX](https://docs.gravityblocks.xyz/), an open marketplace
-for Solana blockspace; searchers send it bundles and transactions to include in
-the blocks it builds.
+gRPC protos and the `gbx-protos` Rust crate for
+[GBX](https://docs.gravityblocks.xyz/), an open marketplace for Solana
+blockspace. Astralane's regional Gravity GBX broadcasters accept bundles and
+fan them out to configured GBX builders, including Bifrost and Titan.
 
 The API is wire-compatible with the subset of the
-[Jito searcher API](https://github.com/jito-labs/mev-protos) that Titan
-supports, so existing Jito clients work after changing the URL. Unsupported
-methods are omitted.
+[Jito searcher API](https://github.com/jito-labs/mev-protos) used by GBX, so
+existing Jito clients can use the same authentication and request flow after
+changing the URL. Unsupported methods are omitted.
 
 ## Quick start
 
-1. Call `GetConnectedLeaders` to find upcoming slots whose leader is connected
-   to GBX. Bundles only land in those slots.
-2. Pick the endpoint closest to the leader or your servers. No key or token is
-   needed.
-3. Send up to 5 signed transactions, including a tip to a Titan tip account,
+1. Register the public key that will authenticate to the Gravity GBX
+   broadcaster.
+2. Use `AuthService` to sign a challenge and obtain a bearer token.
+3. Call `GetConnectedLeaders` to find upcoming slots whose leader is connected
+   to GBX.
+4. Pick the endpoint closest to your servers and send the signed transactions
    with `SendBundle`.
 
 ## Endpoints
 
-| Region    | Endpoint                           |
-| --------- | ---------------------------------- |
-| Amsterdam | `https://sol-ams.titanbuilder.xyz` |
-| Frankfurt | `https://sol-fra.titanbuilder.xyz` |
-| London    | `https://sol-lon.titanbuilder.xyz` |
-| Tokyo     | `https://sol-tyo.titanbuilder.xyz` |
+| Region    | Endpoint                                      |
+| --------- | --------------------------------------------- |
+| Frankfurt | `http://fra-gbx.gateway.astralane.io:5064`    |
+| Amsterdam | `http://ams-gbx.gateway.astralane.io:5064`    |
+| London    | `http://lon-gbx.gateway.astralane.io:5064`    |
+| Tokyo     | `http://jp-gbx.gateway.astralane.io:5064`     |
 
-Every region forwards to Titan builders in all regions.
+Every regional broadcaster fans accepted bundles out to its configured GBX
+builders.
 
 ## Methods
 
@@ -54,26 +55,14 @@ A bundle lands all or nothing, in order. Optional fields on top of Jito's
 
 ## Tipping
 
-- Minimum tip is 5000 lamports; larger tips get higher priority.
-- Pick a random tip account per bundle so your bundles don't all write-lock the
-  same account.
-- Tip with a static instruction, not through CPI.
-
-```
-xk95T6h7nFSRZepEf6JGdv9BCvZLER6dDGXg2KmJ1t1
-AEg8jYwFpEYXaVd3jMpxPu8V1HXvSvmZr9ms8wm4ub1a
-HiLntniupDE3Y18j8BtoMtE6MxQdXRfJw3xYCKfBt3t5
-8bXKHaeUzcYGr8ag8WJVdg2Etiy8vw3TCcb5f3dQ4xaq
-HtmPJ2k1SzFzLE6Zdu7RXqGxgDPKx2C5Hkdu189B7TXe
-5yjjgHRL8q4uuWXsg3CAvBJdLQ3NUDwJK17EjHHeCorX
-DDceWhu2X1x38FWGzjPXnNGnKqJwPYHqTX4Xr2gd6xbW
-2bERRYFDaZfMNN4TwiFLgm5wntZ457YnmpRBrpSUw9Aj
-```
+The Gravity GBX broadcaster does not impose a minimum tip or select a builder's
+tip account. Include the fee or tip required by the downstream builders you
+want to target.
 
 ## Rate limits
 
-5 requests per second by default. For higher limits or a custom setup, reach
-out on [Discord](https://discord.gg/hnerZ7dhTk).
+Limits are configured per authenticated public key. For access or a higher
+limit, reach out on [Discord](https://discord.gg/hnerZ7dhTk).
 
 ## Using the crate
 
@@ -88,7 +77,7 @@ leaders, then sends the given signed transactions (raw or base64 files) as one
 bundle:
 
 ```sh
-cargo run --example send_bundle -- https://sol-ams.titanbuilder.xyz tx1 tx2
+cargo run --example send_bundle -- http://ams-gbx.gateway.astralane.io:5064
 ```
 
 Reuse one connection rather than reconnecting per bundle.
@@ -97,8 +86,8 @@ Other languages: compile `protos/` with any protobuf toolchain, or use a Jito
 client. With `grpcurl`:
 
 ```sh
-grpcurl -import-path protos -proto searcher.proto \
-  sol-ams.titanbuilder.xyz:443 searcher.SearcherService/GetConnectedLeaders
+grpcurl -plaintext -import-path protos -proto searcher.proto \
+  ams-gbx.gateway.astralane.io:5064 searcher.SearcherService/GetConnectedLeaders
 ```
 
 ## Development
