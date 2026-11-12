@@ -50,7 +50,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 .ok()
                 .and_then(|text| BASE64.decode(text.trim()).ok())
                 .unwrap_or(bytes);
-            Ok(Packet { data, meta: None })
+            Ok(Packet {
+                data: data.into(),
+                meta: None,
+            })
         })
         .collect::<Result<Vec<_>, Box<dyn Error>>>()?;
     if packets.is_empty() {

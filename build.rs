@@ -4,6 +4,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     tonic_prost_build::configure()
+        .bytes(".packet.Packet.data")
         .out_dir("src/generated")
         .compile_protos(
             &[

@@ -6,8 +6,8 @@ pub struct PacketBatch {
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Packet {
-    #[prost(bytes = "vec", tag = "1")]
-    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(bytes = "bytes", tag = "1")]
+    pub data: ::prost::bytes::Bytes,
     #[prost(message, optional, tag = "2")]
     pub meta: ::core::option::Option<Meta>,
 }
