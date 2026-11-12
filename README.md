@@ -1,6 +1,6 @@
-# solana-protos
+# gbx-protos
 
-gRPC protos and the `sol-protos` Rust crate for the
+gRPC protos and the `gbx-protos` Rust crate for the
 [Titan Solana bundle API](https://docs.titanbuilder.xyz/solana). Titan is a
 block builder on [GBX](https://docs.gravityblocks.xyz/), an open marketplace
 for Solana blockspace; searchers send it bundles and transactions to include in
@@ -39,7 +39,6 @@ Every region forwards to Titan builders in all regions.
 | `SendTransaction`             | Send a single signed transaction.                        |
 | `GetConnectedLeaders`         | Connected validators and their upcoming leader slots.    |
 | `GetConnectedLeadersRegioned` | The same, grouped by region.                             |
-| `GetTipAccounts`              | The Titan tip accounts.                                  |
 | `GetRegions`                  | Your current region and all available regions.           |
 
 There is no bundle result stream; check landing on chain.
@@ -80,13 +79,13 @@ out on [Discord](https://discord.gg/hnerZ7dhTk).
 
 ```toml
 [dependencies]
-sol-protos = { git = "https://github.com/gattaca-com/solana-protos" }
+gbx-protos = { git = "https://github.com/Astralane/gbx-protos" }
 tonic = { version = "0.14", features = ["tls-ring", "tls-webpki-roots"] }
 ```
 
-[`examples/send_bundle.rs`](examples/send_bundle.rs) prints the tip accounts
-and next connected leaders, then sends the given signed transactions (raw or
-base64 files) as one bundle:
+[`examples/send_bundle.rs`](examples/send_bundle.rs) prints the next connected
+leaders, then sends the given signed transactions (raw or base64 files) as one
+bundle:
 
 ```sh
 cargo run --example send_bundle -- https://sol-ams.titanbuilder.xyz tx1 tx2
@@ -99,7 +98,7 @@ client. With `grpcurl`:
 
 ```sh
 grpcurl -import-path protos -proto searcher.proto \
-  sol-ams.titanbuilder.xyz:443 searcher.SearcherService/GetTipAccounts
+  sol-ams.titanbuilder.xyz:443 searcher.SearcherService/GetConnectedLeaders
 ```
 
 ## Development

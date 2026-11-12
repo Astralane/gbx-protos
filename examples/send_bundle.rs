@@ -1,5 +1,5 @@
-//! Prints the tip accounts and next connected leaders, then sends the given
-//! signed transactions (one per file, raw or base64) as one bundle.
+//! Prints the next connected leaders, then sends the given signed transactions
+//! (one per file, raw or base64) as one bundle.
 //!
 //! ```sh
 //! cargo run --example send_bundle -- https://sol-ams.titanbuilder.xyz [<tx file>...]
@@ -8,12 +8,11 @@
 use std::{env, error::Error, fs};
 
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
-use sol_protos::{
+use gbx_protos::{
     bundle::Bundle,
     packet::Packet,
     searcher::{
-        ConnectedLeadersRequest, GetTipAccountsRequest, SendBundleRequest,
-        searcher_service_client::SearcherServiceClient,
+        ConnectedLeadersRequest, SendBundleRequest, searcher_service_client::SearcherServiceClient,
     },
 };
 use tonic::transport::{Channel, ClientTlsConfig};
@@ -29,13 +28,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .connect()
         .await?;
     let mut searcher = SearcherServiceClient::new(channel);
-
-    let tips = searcher
-        .get_tip_accounts(GetTipAccountsRequest {})
-        .await?
-        .into_inner()
-        .accounts;
-    println!("tip accounts: {}", tips.join(" "));
 
     let leaders = searcher
         .get_connected_leaders(ConnectedLeadersRequest {})

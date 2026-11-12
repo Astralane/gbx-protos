@@ -37,12 +37,6 @@ message ConnectedLeadersRegionedResponse {
   map<string /* region */, ConnectedLeadersResponse> connected_validators = 1;
 }
 
-message GetTipAccountsRequest {}
-
-message GetTipAccountsResponse {
-  repeated string accounts = 1;
-}
-
 message GetRegionsRequest {}
 
 message GetRegionsResponse {
@@ -55,6 +49,5 @@ service SearcherService {
   rpc SendTransaction (SendTransactionRequest) returns (SendTransactionResponse) {}
   rpc GetConnectedLeaders (ConnectedLeadersRequest) returns (ConnectedLeadersResponse) {}
   rpc GetConnectedLeadersRegioned (ConnectedLeadersRegionedRequest) returns (ConnectedLeadersRegionedResponse) {}
-  rpc GetTipAccounts (GetTipAccountsRequest) returns (GetTipAccountsResponse) {}
   rpc GetRegions (GetRegionsRequest) returns (GetRegionsResponse) {}
 }

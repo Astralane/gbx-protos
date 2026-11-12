@@ -45,13 +45,6 @@ pub struct ConnectedLeadersRegionedResponse {
     >,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct GetTipAccountsRequest {}
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct GetTipAccountsResponse {
-    #[prost(string, repeated, tag = "1")]
-    pub accounts: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-}
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetRegionsRequest {}
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetRegionsResponse {
@@ -254,30 +247,6 @@ pub mod searcher_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
-        pub async fn get_tip_accounts(
-            &mut self,
-            request: impl tonic::IntoRequest<super::GetTipAccountsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetTipAccountsResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/searcher.SearcherService/GetTipAccounts",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("searcher.SearcherService", "GetTipAccounts"));
-            self.inner.unary(req, path, codec).await
-        }
         pub async fn get_regions(
             &mut self,
             request: impl tonic::IntoRequest<super::GetRegionsRequest>,
@@ -343,13 +312,6 @@ pub mod searcher_service_server {
             request: tonic::Request<super::ConnectedLeadersRegionedRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ConnectedLeadersRegionedResponse>,
-            tonic::Status,
-        >;
-        async fn get_tip_accounts(
-            &self,
-            request: tonic::Request<super::GetTipAccountsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetTipAccountsResponse>,
             tonic::Status,
         >;
         async fn get_regions(
@@ -614,52 +576,6 @@ pub mod searcher_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetConnectedLeadersRegionedSvc(inner);
-                        let codec = tonic_prost::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/searcher.SearcherService/GetTipAccounts" => {
-                    #[allow(non_camel_case_types)]
-                    struct GetTipAccountsSvc<T: SearcherService>(pub Arc<T>);
-                    impl<
-                        T: SearcherService,
-                    > tonic::server::UnaryService<super::GetTipAccountsRequest>
-                    for GetTipAccountsSvc<T> {
-                        type Response = super::GetTipAccountsResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::GetTipAccountsRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as SearcherService>::get_tip_accounts(&inner, request)
-                                    .await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = GetTipAccountsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
