@@ -22,15 +22,7 @@ changing the URL. Unsupported methods are omitted.
 
 ## Endpoints
 
-| Region    | Endpoint                                      |
-| --------- | --------------------------------------------- |
-| Frankfurt | `http://fra-gbx.gateway.astralane.io:5064`    |
-| Amsterdam | `http://ams-gbx.gateway.astralane.io:5064`    |
-| London    | `http://lon-gbx.gateway.astralane.io:5064`    |
-| Tokyo     | `http://jp-gbx.gateway.astralane.io:5064`     |
-
-Every regional broadcaster fans accepted bundles out to its configured GBX
-builders.
+Refer https://astralane.gitbook.io/docs/gravity-block-exchange-gbx/submit-bundles#endpoints 
 
 ## Methods
 
